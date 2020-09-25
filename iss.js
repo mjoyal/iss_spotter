@@ -40,13 +40,20 @@ const fetchCoordsByIP = function(ip, callback2) {
   });
 };
 
+const fetchISSFlyOverTimes = function(coords, callback3) {
+  request(`http://api.open-notify.org/iss-pass.json?lat=${coords.latitude}&lon=${coords.longitude}`, (error, response, body) => {
+    if (error) {
+      callback3(error, null);
+      return;
+    } else if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+      callback3(Error(msg), null);
+      return;
+    } else {
+      const times = JSON.parse(body).response;
+      callback3(null, times);
+    }
+  });
+};
 
-module.exports = { fetchMyIP, fetchCoordsByIP, IP};
-
-
-
-
-
-// https://api.ipify.org?format=json
-
-// response.statusCode;
+module.exports = { fetchMyIP, fetchCoordsByIP, IP, fetchISSFlyOverTimes};
